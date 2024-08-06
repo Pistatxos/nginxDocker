@@ -1,0 +1,22 @@
+# Ignorar archivos de sistema
+*.DS_Store
+
+# Ignorar directorios de cache de Python
+*__pycache__
+
+# Ignorar archivos de entorno
+.env
+
+# Ignorar logs
+*.log
+
+# Ignorar directorios de construcción
+dist/
+build/
+
+# Ignorar configuración de IDEs/editores
+.vscode/
+.idea/
+
+# Ignorar Docker volúmenes y otros archivos temporales
+tmp/

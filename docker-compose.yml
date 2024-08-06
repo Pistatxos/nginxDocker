@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./infrastructure/certbot-conf:/etc/letsencrypt
+      - ./infrastructure/config_nginx:/etc/nginx
+    command: ['renew', '--webroot', '-w', '/etc/letsencrypt', '--quiet']
+
+
+  nginx:
+    build:
+      context: ./infrastructure
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/config_nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./infrastructure/config_nginx/sites-enabled:/etc/nginx/sites-enabled
+      - ./infrastructure/certbot-conf:/etc/letsencrypt
+      - ./infrastructure/ssl:/etc/nginx/ssl
+      - ./LOGS/nginx:/var/log/nginx
+      - ./infrastructure/fail2ban/jail.local:/etc/fail2ban/jail.local
+      - ./infrastructure/fail2ban/nginx-http-auth.conf:/etc/fail2ban/filter.d/nginx-http-auth.conf
+      - ./infrastructure/started.sh:/usr/local/bin/started.sh
+    privileged: true
+    networks:
+      - tu_red
+    depends_on:
+      - certbot
+    env_file:
+      - .env
+
+networks:
+  tu_red:
+    external: true
