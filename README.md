@@ -142,29 +142,52 @@ Para configurar usuario y password:
 3. Editar started.sh:
   - En el started.sh puedes crear los archivos necesarios. Con -c se crea el archivo y con -b se actualizan los datos.
   - Se pueden tener varios usuarios por archivo. Por ejemplo:
-  ```
-    htpasswd -c -b /etc/nginx/.htpasswd $HTPASSWD_USER $HTPASSWD_PASS
-    htpasswd -c -b /etc/nginx/.htpasswd $HTPASSWD_USER3 $HTPASSWD_PASS3
-    htpasswd -c -b /etc/nginx/.htpasswd2 $HTPASSWD_USER_2 $HTPASSWD_PASS_2
-  ```
+    ```
+      htpasswd -c -b /etc/nginx/.htpasswd $HTPASSWD_USER $HTPASSWD_PASS
+      htpasswd -c -b /etc/nginx/.htpasswd $HTPASSWD_USER3 $HTPASSWD_PASS3
+      htpasswd -c -b /etc/nginx/.htpasswd2 $HTPASSWD_USER_2 $HTPASSWD_PASS_2
+    ```
 4. Configurar Nginx:
   - En el archivo de configuración de Nginx, añade la configuración de autentificación:
-  ```
-  ## --------- Control de contraseña --------- ## 
-  ## *Comenta si no quieres usarlo
-  auth_basic "Area Restringida";
-  auth_basic_user_file /etc/nginx/.htpasswd;
-  ## ---------
-  ```
+    ```
+    ## --------- Control de contraseña --------- ## 
+    ## *Comenta si no quieres usarlo
+    auth_basic "Area Restringida";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+    ## ---------
+    ```
   - Tan solo añade el archivo correspondiente.
 5. Ejemplo del archivo .env:
+    ```
+    HTPASSWD_USER=user1
+    HTPASSWD_PASS=password1
+    HTPASSWD_USER2=user2
+    HTPASSWD_PASS2=password2
+    HTPASSWD_USER3=user3
+    HTPASSWD_PASS3=password3
+    ```
+
+6. Notas de htpasswd para ejecutar desde la terminal (el contenedor en este caso):
+ - Para crear archivo con contraseña y usuario
+    ```
+    sudo htpasswd -c /etc/nginx/.htpasswd tu_usuario
+    ```
+ - Añadir más usuarios (omitimos -c para no sobrescribir el archivo):
+    ```
+    sudo htpasswd /etc/nginx/.htpasswd otro_usuario
+    ```
+- Verificar Archivo de Contraseñas
   ```
-  HTPASSWD_USER=user1
-  HTPASSWD_PASS=password1
-  HTPASSWD_USER2=user2
-  HTPASSWD_PASS2=password2
-  HTPASSWD_USER3=user3
-  HTPASSWD_PASS3=password3
+  cat /etc/nginx/.htpasswd
+  ```
+  * El archivo debe contener una línea con el nombre de usuario y la contraseña cifrada.
+- Cambiar la contraseña de un usuario ya creado
+  ```
+  htpasswd /etc/nginx/.htpasswd nombre_de_usuario
+  ```
+- Para eliminar un usuario:
+  ```
+  htpasswd -D /etc/nginx/.htpasswd nombre_de_usuario
   ```
 
 ### Control de Ataques con fail2ban
